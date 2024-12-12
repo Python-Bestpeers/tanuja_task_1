@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content%}
+{%if tasks%}
+{% for task in tasks%}
+<div class="container">
+    <div class="task-details">
+      <h2>Task Title: {{task.title}}</h2>
+      <p><span>Priority:</span> {{task.priority}}</p>
+      <p><span>Status:</span> {{task.status}}</p>
+      <p><span>start_date:</span> {{task.start_date}}</p>
+      <p><span>end_date:</span> {{task.end_date}}</p>
+      <p><span>Assign_By:</span> {{user.email}}</p>
+      <p><span>Assign_to:</span> {{task.assigned_to}}</p>
+      <p><span>Description:</span> {{task.description}}</p>
+      <a href="{% url 'UpdateTask' task.id%}"><button style="background-color:green">UpdateTask<button></a>
+      <a href="{% url 'DeleteTask' task.id%}"><button style="background-color:red">DeleteTask<button></a>
+      <a href="{% url 'Commentdata' task.id %}"><button>Comment</button></a>
+      <a href="{%url 'CommentShow' task.id%}"> View Comment</a>
+    </div>
+    {%endfor%}
+    {%endif%}
+{%endblock%}

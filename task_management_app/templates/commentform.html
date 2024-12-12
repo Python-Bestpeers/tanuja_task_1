@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/commentform.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="form-container">
+        <h2>Add a Comment</h2>
+        <form method="POST"  action="{% url 'Commentdata' task.id %}" >
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="commentdata">Your Comment</label>
+                <textarea name="commentdata" id="commentdata" placeholder="Write your comment here..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Submit Comment</button>
+        </form>
+    </div>
+{%endblock%}
+
+

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/updateform.css' %}">
+{% endblock %}
+{%block content%}
+  <div class="form-container">
+    <h2>Update Task</h2>
+    <form method="POST" action="#">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" value="{{task.title}}" name="title" id="title" placeholder="Enter task title" value="Task Title">
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Priority</label>
+        <select name="priority" id="priority" value="{{task.priority}}">
+          <option value="high" selected>High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select name="status" id="status" value="{{task.status}}">
+          <option value="pending" selected>Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="end_date">End Date</label>
+        <input type="date" value="{{ task.end_date|date:"y-m-d" }}" name="end_date" id="end_date" >
+      </div>
+
+      
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea name="description" name="{{task.description}}" id="description" placeholder="Enter task description"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Update Task</button>
+    </form>
+  </div>
+
+
+{%endblock%}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profilestyle.css' %}">
+{% endblock %}
+{% block content %}
+<div class="form-container">
+  <h1>User Profile</h1>  
+  <div class="profile-container">
+    <p style="text-align:left"><strong>Email:</strong> {{ profile.email }}</p>
+    <p  style="text-align:left"><strong>Phone:</strong> {{ profile.phone_no }}</p>
+  </div>
+<a href="{% url 'homepage'%}"><button style="color:black;text-decoration:none">Back To Home</button></a>
+{% endblock %}
