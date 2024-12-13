@@ -6,20 +6,32 @@
 {%block content%}
   
 
-  <div class="form-container">
-    <h1>Create User</h1>
-    <form method="POST">
-        {% csrf_token %}
+<div class="form-container">
+  <h1>Create User</h1>
+  <form method="POST">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      
       <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <label for="email">Email Address</label>
+          {{ form.email }}
+          {{ form.email.errors }}
       </div>
+      
       <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" pattern="[0-9]{10}" required>
+          <label for="phone">Phone Number</label>
+          {{ form.phone_no }}
+          {{ form.phone_no.errors }}
       </div>
+      
       <button type="submit" class="btn">Submit</button>
-    </form>
-  </div>
-
+      {% if messages %}
+      <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+  </form>
+</div>
 {% endblock%}

@@ -52,9 +52,9 @@
     </div>
 
     <a href="{% url 'TaskCreate'%}"><button class="create-task-btn" id="create-task-btn">+ Create Task</button></a>
-    <form method="GET">
+    <form method="GET" action="{% url 'TaskSearch' %}">
       {% csrf_token %}
-      <input type="text" name="q" placeholder="Search products...">
+      <input type="text" name="q" placeholder="Search tasks...">
       <button type="submit">Search</button>
   </form>
 

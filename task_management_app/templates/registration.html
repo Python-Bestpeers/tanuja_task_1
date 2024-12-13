@@ -35,6 +35,13 @@
       <div class="text">
         <h3>Already have an account? <a href="{% url 'loginform'%}">Login now</a></h3>
       </div>
+      {% if messages %}
+      <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+      </ul>
+      {% endif %}
     </form>
   </div>
 </body>

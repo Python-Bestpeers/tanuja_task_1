@@ -37,26 +37,27 @@
       </div>
       <div class="card card-green">
         <h3>Completed</h3>
-        <p>{{completed}}</p>
+        <p>{{completed_count}}</p>
       </div>
       <div class="card card-yellow">
         <h3>In_progress</h3>
-        <p>{{in_progress}}</p>
+        <p>{{in_progress_count}}</p>
        
       </div>
       <div class="card card-red">
         <h3>Panding</h3>
-        <p>{{pending}}</p>
+        <p>{{pending_count}}</p>
         
       </div>
     </div>
 
     <a href="{% url 'TaskCreate'%}"><button class="create-task-btn" id="create-task-btn">+ Create Task</button></a>
-    <form method="GET">
+    <form method="GET" action="{% url 'TaskSearch' %}">
       {% csrf_token %}
-      <input type="text" name="q" placeholder="Search products...">
+      <input type="text" name="q" placeholder="Search tasks...">
       <button type="submit">Search</button>
   </form>
+  
     <div class="task-list">
       <h2>Your Tasks</h2>
       <table>
