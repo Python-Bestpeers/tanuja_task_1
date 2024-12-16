@@ -1,5 +1,21 @@
 from django.urls import path
-from .views import LoginForm,SignupForm,HomePage,LogoutPage,ProfileView,TaskCreate,TaskView,TaskDetails,CommentData,DeleteTask,UpdateTask,CommentShow,UserCreate,UserList,TaskSearch
+from .views import (
+    LoginForm,
+    SignupForm,
+    HomePage,
+    LogoutPage,
+    ProfileView,
+    TaskCreate,
+    TaskView,
+    TaskDetails,
+    CommentData,
+    DeleteTask,
+    UpdateTask,
+    CommentShow,
+    UserCreate,
+    UserList,
+    TaskSearch,
+)
 
 
 urlpatterns = [
