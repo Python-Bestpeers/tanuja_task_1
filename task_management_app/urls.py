@@ -17,7 +17,6 @@ from .views import (
     TaskSearch,
 )
 
-
 urlpatterns = [
     path("", LoginForm.as_view(), name="loginform"),
     path("signupform/", SignupForm.as_view(), name="signupform"),

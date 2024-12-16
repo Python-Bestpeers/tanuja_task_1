@@ -3,7 +3,6 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Task, User, Comment
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.core.mail import send_mail
 from django.conf import settings
@@ -11,9 +10,6 @@ from django.http import HttpResponse
 import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserCreateForm
-
-# Create your views here.
-User = get_user_model()
 
 
 class LoginForm(View):
@@ -243,7 +239,7 @@ class UpdateTask(LoginRequiredMixin, View):
 
             messages.success(request, "task updated Succefully")
             return redirect("homepage")
-        except:
+        except Exception:
             return render(request, "updateform.html", {"task": task})
 
 
@@ -293,7 +289,7 @@ class TaskSearch(LoginRequiredMixin, View):
                     | Q(end_date__icontains=query)
                     | Q(status__icontains=query)
                 )
-            except:
+            except Exception:
                 tasks = Task.objects.all()
         else:
             tasks = Task.objects.all()
