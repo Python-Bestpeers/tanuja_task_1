@@ -2,65 +2,57 @@
 {% load static %}
 {% block extra_head %}<link rel="stylesheet" href="{% static 'css/taskcreate.css' %}">{% endblock %}
 {% block content %}
+
 <div class="container">
   <div class="form-header">
     <h2>Create New Task</h2>
   </div>
   <form method='POST'>
     {% csrf_token %}
+    {{ form.non_field_errors }}
+
     <div class="mb-3">
       <label for="task-name" class="form-label">Task Name</label>
-      <input type="text" class="form-control" id="task-name" name="taskname" placeholder="Enter task name" required>
+      {{ form.title }}
+      {{ form.title.errors }}
     </div>
 
     <div class="mb-3">
       <label for="priority" class="form-label">Priority</label>
-      <select id="priority" class="form-select" name="priority" required>
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
-      </select>
+      {{ form.priority }}
+      {{ form.priority.errors }}
     </div>
 
     <div class="mb-3">
       <label for="status" class="form-label">Status</label>
-      <select id="status" class="form-select" name="status" required>
-        <option value="pending">Pending</option>
-        <option value="in-progress">In Progress</option>
-        <option value="completed">Completed</option>
-      </select>
+      {{ form.status }}
+      {{ form.status.errors }}
     </div>
-
 
     <div class="mb-3">
       <label for="end-date" class="form-label">End Date</label>
-      <input type="date" class="form-control" id="end-date"  name="enddate" required>
-    </div>
-
-   
-    <div class="mb-3">
-      <label for="assign-to" class="form-label">Assigned By</label>
-      <input type="text" class="form-control" id="assign-to" name="assigner" value="{{user.email}}" required>
-
+      {{ form.end_date }}
+      {{ form.end_date.errors }}
     </div>
 
     <div class="mb-3">
-      <label for="assign-to" class="form-label">Assigned To</label>
-      <input type="text" class="form-control" id="assign-to" name="assignee" placeholder="Assignee's email" required>
-
+      <label for="assign_to" class="form-label">Assigned To</label>
+      {{ form.assigned_to }}
+      {{ form.assigned_to.errors }}
     </div>
 
     <div>
       <label for="description">Task Description:</label>
-      <textarea id="description" name="description" placeholder="Enter task description" rows="5" cols="30"></textarea>
+      {{ form.description }}
+      {{ form.description.errors }}
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Create Task</button>
     {% if messages %}
       <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
       </ul>
     {% endif %}
   </form>
@@ -68,4 +60,7 @@
     <a href="{% url 'homepage'%}" class="btn btn-secondary">Back to Dashboard</a>
   </div>
 </div>
+
+
+
 {% endblock %}

@@ -4,64 +4,70 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Task, User, Comment
 from django.contrib import messages
 from django.db.models import Q
-from django.core.mail import send_mail
-from django.conf import settings
 from django.http import HttpResponse
-import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import UserCreateForm
+from .utils import send_update_mail, send_update_status
+from .forms import (
+    UserCreateForm,
+    TaskUpdateForm,
+    TaskCreateForm,
+    LoginForm,
+    RegistrationForm,
+    CommentForm,
+)
 
 
-class LoginForm(View):
+# user login user With email and password
+class LoginView(View):
     def get(self, request):
-        return render(request, "login.html")
+        form = LoginForm()
+        return render(request, "login.html", {"form": form})
 
     def post(self, request):
-        email = request.POST.get("email")
-        password = request.POST.get("Password")
-        if not email or not password:
-            messages.error(request, "Email and password are required")
-            return redirect("loginform")
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect("homepage")
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("homepage")
+            else:
+                messages.error(
+                    request,
+                    "Authentication failed. Please check your credentials.",
+                )
         else:
-            messages.error(
-                request,
-                "Authentication failed. Please check your credentials.",
-            )
-            return redirect("loginform")
+            messages.error(request, "Please fill out the form correctly.")
+        return render(request, "login.html", {"form": form})
 
 
-class SignupForm(View):
+# create new user
+class RegistrationView(View):
     def get(self, request):
-        return render(request, "registration.html")
+        form = RegistrationForm()
+        return render(request, "registration.html", {"form": form})
 
     def post(self, request):
-        email = request.POST.get("email")
-        phone_no = request.POST.get("phone_no")
-        password = request.POST.get("password")
-        confirm_password = request.POST.get("confirm_password")
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match!")
-            return redirect("signupform")
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            phone_no = form.cleaned_data.get("phone_no")
+            password = form.cleaned_data.get("password")
 
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "Email is already registered.")
-            return redirect("signupform")
+            user = User.objects.create_user(
+                email=email, phone_no=phone_no, password=password
+            )
+            user.save()
 
-        if User.objects.filter(phone_no=phone_no).exists():
-            messages.error(request, "Phone number is already registered.")
-            return redirect("signupform")
-
-        user = User.objects.create_user(
-            email=email, phone_no=phone_no, password=password
-        )
-        login(request, user)
-        return redirect("loginform")
+            messages.success(request, "User registered successfully")
+            return redirect("loginform")
+        else:
+            messages.error(request, "Please correct the errors below.")
+        return render(request, "registration.html", {"form": form})
 
 
+# home page with task list
 class HomePage(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
@@ -96,12 +102,14 @@ class HomePage(LoginRequiredMixin, View):
         )
 
 
+# logout user
 class LogoutPage(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         return redirect("loginform")
 
 
+# user profile show
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
@@ -116,52 +124,27 @@ class ProfileView(LoginRequiredMixin, View):
             return HttpResponse(f"An error occurred: {str(e)}", status=500)
 
 
-class TaskCreate(LoginRequiredMixin, View):
+# create new task
+class TaskCreateView(LoginRequiredMixin, View):
     def get(self, request):
-        user = request.user
-        return render(request, "taskcreateform.html", {"user": user})
+        form = TaskCreateForm()
+        return render(request, "taskcreateform.html", {"form": form})
 
     def post(self, request):
-        taskname = request.POST.get("taskname")
-        priority = request.POST.get("priority")
-        status = request.POST.get("status")
-        enddate = request.POST.get("enddate")
-        assigner = request.user
-        assignee_email = request.POST.get("assignee")
-        description = request.POST.get("description")
-        try:
-            user1 = User.objects.get(email=assignee_email.strip().lower())
-        except User.DoesNotExist:
-            return render(
-                request,
-                "taskcreateform.html",
-                {
-                    "user": assigner,
-                    "error": f"No user found with email {assignee_email}",
-                },
-            )
-        Task.objects.create(
-            title=taskname,
-            priority=priority,
-            status=status,
-            assigned_by=assigner,
-            assigned_to=user1,
-            end_date=enddate,
-            description=description,
-        )
-        subject = "Task Assigned"
-        message = f"""Task : {taskname},
-    Description: {description},
-    Assigned_By:{assigner}
-    Priority: {priority}
-    Start Date: {datetime.datetime.now},
-    End Date: {enddate}"""
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [assignee_email]
-        send_mail(subject, message, email_from, recipient_list)
-        return redirect("homepage")
+        form = TaskCreateForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.assigned_by = request.user
+            task.save()
+            send_update_mail(task)
+            messages.success(request, "Task created successfully")
+            return redirect("homepage")
+        else:
+            messages.error(request, "There was an error creating the task.")
+        return render(request, "taskcreateform.html", {"form": form})
 
 
+# task list show
 class TaskView(LoginRequiredMixin, View):
     def get(self, request):
         Tasks = Task.objects.all()
@@ -174,33 +157,41 @@ class TaskView(LoginRequiredMixin, View):
         )
 
 
+# show details of perticular view
 class TaskDetails(LoginRequiredMixin, View):
     def get(self, request, id):
         task = get_object_or_404(Task, id=id)
         return render(request, "taskdetails.html", {"task": task})
 
 
-class CommentData(LoginRequiredMixin, View):
+# create comment for perticular task
+class CommentView(View):
     def get(self, request, id):
-        task = Task.objects.get(id=id)
-        return render(request, "commentform.html", {"task": task})
+        form = CommentForm()
+        task = get_object_or_404(Task, id=id)
+        return render(
+            request, "commentform.html", {"form": form, "task": task}
+        )
 
     def post(self, request, id):
-        text = request.POST.get("commentdata")
-        task = Task.objects.get(id=id)
-        if text:
-            Comment.objects.create(
-                user_reference=request.user,
-                comment_text=text,
-                task_reference=task,
-            )
-            messages.success(request, "comment added successfully")
+        form = CommentForm(request.POST)
+        task = get_object_or_404(Task, id=id)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.task = task
+            comment.user_reference = request.user
+            comment.task_reference = task
+            comment.save()
+            messages.success(request, "Comment added successfully")
             return redirect(f"/CommentShow/{id}")
         else:
-            messages.error(request, "task comment is not found")
-            return redirect("Taskdetails")
+            messages.error(request, "Please correct the errors below.")
+        return render(
+            request, "commentform.html", {"form": form, "task": task}
+        )
 
 
+# dalete Task
 class DeleteTask(LoginRequiredMixin, View):
     def get(self, request, id):
         task = Task.objects.filter(id=id)
@@ -208,41 +199,28 @@ class DeleteTask(LoginRequiredMixin, View):
         return redirect("TaskView")
 
 
-class UpdateTask(LoginRequiredMixin, View):
+# Task data update
+class TaskUpdateView(LoginRequiredMixin, View):
     def get(self, request, id):
-        task = Task.objects.filter(id=id).values().first()
-        if task:
-            task["start_date"] = task["start_date"].strftime("%Y-%m-%d")
-            task["end_date"] = task["end_date"].strftime("%Y-%m-%d")
-        return render(request, "updateform.html", {"task": task})
+        task = get_object_or_404(Task, pk=id)
+        form = TaskUpdateForm(instance=task)
+        return render(request, "updateform.html", {"form": form, "task": task})
 
     def post(self, request, id):
-        task = get_object_or_404(Task, id=id)
-        try:
-            task.title = request.POST.get("title")
-            task.priority = request.POST.get("priority")
-            task.status = request.POST.get("status")
-            task.end_date = request.POST.get("end_date")
-            task.description = request.POST.get("description")
+        task = get_object_or_404(Task, pk=id)
+        form = TaskUpdateForm(request.POST, instance=task)
+        if form.is_valid():
+            task = form.save()
             task.save()
-            subject = "Task Status Update"
-            message = f"""Task : {task.title},
-                      Description: {task.description},
-                      Assigned_By:{task.assigned_by}
-                      Priority: {task.priority}
-                      Start Date: {task.start_date},
-                      End Date: {task.end_date}
-              """
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [task.assigned_to]
-            send_mail(subject, message, email_from, recipient_list)
-
-            messages.success(request, "task updated Succefully")
+            send_update_status(task)
+            messages.success(request, "Task updated successfully")
             return redirect("homepage")
-        except Exception:
-            return render(request, "updateform.html", {"task": task})
+        else:
+            messages.error(request, "There was an error updating the task.")
+        return render(request, "updateform.html", {"form": form, "task": task})
 
 
+# show comment for perticular Task
 class CommentShow(LoginRequiredMixin, View):
     def get(self, request, id):
         task = Task.objects.get(id=id)
@@ -257,6 +235,7 @@ class CommentShow(LoginRequiredMixin, View):
             return render(request, "commentshow.html", {"comments": comments})
 
 
+# create new user
 class UserCreate(LoginRequiredMixin, View):
     def get(self, request):
         form = UserCreateForm()
@@ -273,12 +252,14 @@ class UserCreate(LoginRequiredMixin, View):
         return render(request, "usercreate.html", {"form": form})
 
 
+# show user List
 class UserList(LoginRequiredMixin, View):
     def get(self, request):
         users = User.objects.all()
         return render(request, "userlist.html", {"users": users})
 
 
+# Search task with title,enddate,status
 class TaskSearch(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "").strip()

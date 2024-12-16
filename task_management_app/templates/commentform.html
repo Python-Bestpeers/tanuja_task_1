@@ -9,8 +9,8 @@
         <form method="POST"  action="{% url 'Commentdata' task.id %}" >
             {% csrf_token %}
             <div class="form-group">
-                <label for="commentdata">Your Comment</label>
-                <textarea name="commentdata" id="commentdata" placeholder="Write your comment here..." required></textarea>
+                <label for="comment_text">Your Comment</label>
+                <textarea name="comment_text" id="comment_text" placeholder="Write your comment here..." required></textarea>
             </div>
             <button type="submit" class="submit-btn">Submit Comment</button>
             {% if messages %}

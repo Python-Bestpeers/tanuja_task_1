@@ -12,29 +12,39 @@
   <div class="wrapper">
     <div class="title"><span>Login Form</span></div>
     <form method='POST'>
-      {% csrf_token %}
-      <div class="row">
-        <i class="fas fa-user"></i>
-        <input type="email" name="email" placeholder="Email" required />
-      </div>
-      <div class="row">
-        <i class="fas fa-lock"></i>
-        <input type="password" name="Password" placeholder="Password" required />
-      </div>
-      <div class="pass"><a href="#">Forgot password?</a></div>
-      <div class="row button">
-        <input type="submit" value="Login" />
-      </div>
-      <div class="signup-link">Not a member? <a href="{% url 'signupform'%}">Signup now</a></div>
-      {% if messages %}
-      <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-      </ul>
-      {% endif %}
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        <div class="row">
+            <i class="fas fa-user"></i>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+        
+        <div class="row">
+            <i class="fas fa-lock"></i>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+        
+        <div class="pass"><a href="#">Forgot password?</a></div>
+        
+        <div class="row button">
+            <input type="submit" value="Login" />
+        </div>
+        
+        <div class="signup-link">Not a member? <a href="{% url 'signupform'%}">Signup now</a></div>
+        
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </form>
-  </div>
+</div>
+
 </body>
 </html>
 

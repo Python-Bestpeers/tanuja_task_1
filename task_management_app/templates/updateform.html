@@ -4,54 +4,53 @@
 <link rel="stylesheet" href="{% static 'css/updateform.css' %}">
 {% endblock %}
 {%block content%}
-  <div class="form-container">
-    <h2>Update Task</h2>
-    <form method="POST" action="#">
+<div class="form-container">
+  <h2>Update Task</h2>
+  <form method="POST">
       {% csrf_token %}
+      {{ form.non_field_errors }}
 
       <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" value="{{task.title}}" name="title" id="title" placeholder="Enter task title" value="Task Title">
+          <label for="title">Title</label>
+          {{ form.title }}
+          {{ form.title.errors }}
       </div>
 
       <div class="form-group">
-        <label for="priority">Priority</label>
-        <select name="priority" id="priority" value="{{task.priority}}">
-          <option value="high" selected>High</option>
-          <option value="medium">Medium</option>
-          <option value="low">Low</option>
-        </select>
+          <label for="priority">Priority</label>
+          {{ form.priority }}
+          {{ form.priority.errors }}
       </div>
 
       <div class="form-group">
-        <label for="status">Status</label>
-        <select name="status" id="status" value="{{task.status}}">
-          <option value="pending" selected>Pending</option>
-          <option value="in-progress">In Progress</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="end_date">End Date</label>
-        <input type="date" value="{{ task.end_date|date:"y-m-d" }}" name="end_date" id="end_date" >
+          <label for="status">Status</label>
+          {{ form.status }}
+          {{ form.status.errors }}
       </div>
 
-      
+      <div class="form-group">
+          <label for="end_date">End Date</label>
+          {{ form.end_date }}
+          {{ form.end_date.errors }}
+      </div>
 
       <div class="form-group">
-        <label for="description">Description</label>
-        <textarea name="description" name="{{task.description}}" id="description" placeholder="Enter task description"></textarea>
+          <label for="description">Description</label>
+          {{ form.description }}
+          {{ form.description.errors }}
       </div>
+
       <button type="submit" class="submit-btn">Update Task</button>
+      
       {% if messages %}
-      <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-      </ul>
+          <ul class="messages">
+              {% for message in messages %}
+                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+          </ul>
       {% endif %}
-    </form>
-  </div>
+  </form>
+</div>
 
 
 {%endblock%}
