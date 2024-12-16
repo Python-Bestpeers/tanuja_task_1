@@ -1,15 +1,10 @@
-from django.shortcuts import render, redirect
-from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Task, User, Comment
-from .models import User
 from django.contrib import messages
-from django.views import View
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
@@ -298,7 +293,7 @@ class TaskSearch(LoginRequiredMixin, View):
                     | Q(end_date__icontains=query)
                     | Q(status__icontains=query)
                 )
-            except Exception as e:
+            except:
                 tasks = Task.objects.all()
         else:
             tasks = Task.objects.all()
