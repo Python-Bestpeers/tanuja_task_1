@@ -32,7 +32,7 @@ class LoginView(View):
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("homepage")
+                return redirect("home_page")
             else:
                 messages.error(
                     request,
@@ -55,7 +55,7 @@ class RegistrationView(View):
         if form.is_valid():
             form.save()
             messages.success(request, "User registered successfully")
-            return redirect("loginform")
+            return redirect("login_form")
         else:
             messages.error(request, "Please correct the errors below.")
         return render(request, "registration.html", {"form": form})
@@ -102,7 +102,7 @@ class LogoutPage(LoginRequiredMixin, View):
 
     def get(self, request):
         logout(request)
-        return redirect("loginform")
+        return redirect("login_form")
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -136,7 +136,7 @@ class TaskCreateView(LoginRequiredMixin, View):
             task.save()
             send_update_mail(task)
             messages.success(request, "Task created successfully")
-            return redirect("homepage")
+            return redirect("home_page")
         else:
             messages.error(request, "There was an error creating the task.")
         return render(request, "taskcreateform.html", {"form": form})
@@ -183,7 +183,7 @@ class CommentView(View):
             comment.user_reference = request.user
             comment.save()
             messages.success(request, "Comment added successfully.")
-            return redirect("TaskView")
+            return redirect("task_view")
         else:
             messages.error(request, "Please correct the errors below.")
         return render(
@@ -197,7 +197,7 @@ class DeleteTask(LoginRequiredMixin, View):
     def get(self, request, id):
         task = Task.objects.filter(id=id)
         task.delete()
-        return redirect("homepage")
+        return redirect("home_page")
 
 
 class TaskUpdateView(LoginRequiredMixin, View):
@@ -216,7 +216,7 @@ class TaskUpdateView(LoginRequiredMixin, View):
             task.save()
             send_update_status(task)
             messages.success(request, "Task updated successfully")
-            return redirect("homepage")
+            return redirect("home_page")
         else:
             messages.error(request, "There was an error updating the task.")
         return render(request, "updateform.html", {"form": form, "task": task})
@@ -250,7 +250,7 @@ class UserCreate(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             messages.success(request, "User Created Successfully")
-            return redirect("homepage")
+            return redirect("home_page")
         else:
             messages.error(request, "There was an error creating the user.")
         return render(request, "usercreate.html", {"form": form})

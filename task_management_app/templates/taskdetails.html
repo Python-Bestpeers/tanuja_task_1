@@ -15,15 +15,6 @@
     <p><span>Assign_to:</span> {{task.assigned_to}}</p>
     <p><span>Description:</span> {{task.description}}</p>
   </div>
-  {% comment %} <div class="comment-section">
-    <button id="toggle-comment-form">Add Comment</button>
-    <form class="comment-form" method='POST'>
-      {% csrf_token %}
-      <textarea rows="4" placeholder="Write your comment here..." name="commentdata"></textarea>
-      <button>Submit</button>
-    </form>
-  </div>
-  <a href="{% url 'CommentShow' task.id%}"><p>view comment</p></a> {% endcomment %}
 </div>
 {%endblock%}
 {% block extra_js %}

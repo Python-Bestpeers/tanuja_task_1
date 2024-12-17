@@ -8,13 +8,10 @@
   <div class="sidebar" id="sidebar">
     <div class="logo">Task Manager</div>
     <ul class="menu">
-      <li><a href="{%url 'homepage'%}">Dashboard</a></li>
-      <li><a href="{%url 'taskview'%}">Tasks</a></li>
-      <li><a href="{%url 'usercreate'%}">Create User</a></li>
-      <li><a href="{%url 'userlist'%}">Users List</a></li>
-      
-      {% comment %} <li><a href="#">Calendar</a></li>
-      <li><a href="#">Settings</a></li> {% endcomment %}
+      <li><a href="{%url 'home_page'%}">Dashboard</a></li>
+      <li><a href="{%url 'task_view'%}">Tasks</a></li>
+      <li><a href="{%url 'user_create'%}">Create User</a></li>
+      <li><a href="{%url 'user_list'%}">Users List</a></li>
     </ul>
   </div>
 
@@ -25,8 +22,8 @@
         <h1>Task Management System</h1>
       </div>
       <div class="navbar-right">
-        <a href="{% url 'profileview' %}" style="color:black;text-decoration:none"><div class="profile">👤 Profile</div></a>
-        <a href="{% url 'logoutpage' %}"><button class="logout-btn">Logout</button></a>
+        <a href="{% url 'profile_view' %}" style="color:black;text-decoration:none"><div class="profile">👤 Profile</div></a>
+        <a href="{% url 'logout_page' %}"><button class="logout-btn">Logout</button></a>
       </div>
     </div>
 
@@ -51,8 +48,8 @@
       </div>
     </div>
 
-    <a href="{% url 'taskcreate'%}"><button class="create-task-btn" id="create-task-btn">+ Create Task</button></a>
-    <form method="GET" action="{% url 'TaskSearch' %}">
+    <a href="{% url 'task_create'%}"><button class="create-task-btn" id="create-task-btn">+ Create Task</button></a>
+    <form method="GET" action="{% url 'task_search' %}">
       {% csrf_token %}
       <input type="text" name="q" placeholder="Search tasks...">
       <button type="submit">Search</button>
@@ -75,7 +72,7 @@
             </thead>
              <tbody id="task-table-body"> 
               {% for task in tasks %} 
-              <tr class="task-item" onclick="window.location.href='{% url 'taskdetails' task.id %}';">
+              <tr class="task-item" onclick="window.location.href='{% url 'task_details' task.id %}';">
                  <td>{{ task.title }}</td> 
                  <td>{{ task.priority }}</td> 
                  <td>{{ task.status }}</td>
@@ -84,8 +81,8 @@
                     <td>{{ task.assigned_by.email }}</td> 
                     <td>{{ task.assigned_to}}</td> 
                     <td>{{ task.modified }}</td>
-                    <td> <a href="{% url 'updatetask' task.id %}" class="btn btn-edit">Edit</a>
-                       <a href="{% url 'deletetask' task.id %}" class="btn btn-delete">Delete</a> </td>
+                    <td> <a href="{% url 'update_task' task.id %}" class="btn btn-edit">Edit</a>
+                       <a href="{% url 'delete_task' task.id %}" class="btn btn-delete">Delete</a> </td>
                        </tr> {% empty %} <tr> <td colspan="9">No tasks available.</td> </tr> 
                        {% endfor %} 
                       </tbody> 
