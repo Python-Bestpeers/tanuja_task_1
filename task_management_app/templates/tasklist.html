@@ -18,8 +18,8 @@
         </div>
       </div>
       <div class="task-actions">
-        <a href="{% url 'commentdata' task.id %}" class="btn btn-edit">Add Comment</a>
-        <a href="{% url 'commentshow' task.id %}" class="btn btn-edit">Show Comment</a>
+        <a href="{% url 'comment_data' task.id %}" class="btn btn-edit">Add Comment</a>
+        <a href="{% url 'comment_show' task.id %}" class="btn btn-edit">Show Comment</a>
       </div>
     </div>
     {% endfor %}

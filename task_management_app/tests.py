@@ -13,7 +13,7 @@ class TaskCreateViewTests(TestCase):
             email="user2@gmail.com", password="user78234"
         )
         self.client.login(email="user1@gmail.com", password="user1234")
-        self.url = reverse("TaskCreate")
+        self.url = reverse("taskcreate")
 
     def test_task_create_get(self):
         response = self.client.get(self.url)
@@ -54,7 +54,7 @@ class TaskUpdateViewTests(TestCase):
             assigned_by=self.user,
         )
         self.client.login(email="user@gmail.com", password="user123")
-        self.url = reverse("UpdateTask", args=[self.task.id])
+        self.url = reverse("updatetask", args=[self.task.id])
 
     def test_task_update_view_get(self):
         response = self.client.get(self.url)
@@ -103,7 +103,7 @@ class DeleteTaskTestCase(TestCase):
     def test_delete_task(self):
         self.client.login(email="testuser@gmail.com", password="testpass")
         response = self.client.get(
-            reverse("DeleteTask", kwargs={"id": self.task.id})
+            reverse("deletetask", kwargs={"id": self.task.id})
         )
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Task.objects.filter(id=self.task.id).exists())
@@ -147,7 +147,7 @@ class TaskSearchTestCase(TestCase):
 
     def test_search_results(self):
         self.client.login(email="testuser@gmail.com", password="password")
-        response = self.client.get(reverse("TaskSearch"), {"q": "Complete"})
+        response = self.client.get(reverse("tasksearch"), {"q": "Complete"})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Complete Django Project")
         self.assertNotContains(response, "Learn Testing")
@@ -201,7 +201,7 @@ class TestAllTaskView(TestCase):
             assigned_by=self.user,
             end_date="2024-12-24",
         )
-        self.url = reverse("TaskView")
+        self.url = reverse("taskview")
 
     def test_all_task_authenticated(self):
         self.client.login(email="testuser@gmail.com", password="12345")
