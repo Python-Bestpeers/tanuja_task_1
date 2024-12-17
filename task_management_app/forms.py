@@ -143,7 +143,6 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Passwords do not match.")
 
         return cleaned_data
-    
 
 
 class CommentForm(forms.ModelForm):
