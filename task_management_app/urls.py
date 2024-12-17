@@ -1,0 +1,37 @@
+from django.urls import path
+from .views import (
+    LoginView,
+    RegistrationView,
+    HomePage,
+    LogoutPage,
+    ProfileView,
+    TaskCreateView,
+    TaskView,
+    TaskDetails,
+    CommentView,
+    DeleteTask,
+    TaskUpdateView,
+    CommentShow,
+    UserCreate,
+    UserList,
+    TaskSearch,
+)
+
+urlpatterns = [
+    path("", LoginView.as_view(), name="loginform"),
+    path("signupform/", RegistrationView.as_view(), name="signupform"),
+    path("homepage/", HomePage.as_view(), name="homepage"),
+    # path('userhome/',userhome.as_view(),name="userhome"),
+    path("logoutpage/", LogoutPage.as_view(), name="logoutpage"),
+    path("profileview/", ProfileView.as_view(), name="profileview"),
+    path("taskcreate/", TaskCreateView.as_view(), name="taskcreate"),
+    path("taskview/", TaskView.as_view(), name="taskview"),
+    path("taskdetails/<int:id>", TaskDetails.as_view(), name="taskdetails"),
+    path("deletetask/<int:id>", DeleteTask.as_view(), name="deletetask"),
+    path("commentdata/<int:id>", CommentView.as_view(), name="commentdata"),
+    path("commentshow/<int:id>", CommentShow.as_view(), name="commentshow"),
+    path("updatetask/<int:id>", TaskUpdateView.as_view(), name="updatetask"),
+    path("usercreate/", UserCreate.as_view(), name="usercreate"),
+    path("userList/", UserList.as_view(), name="userlist"),
+    path("taskSearch/", TaskSearch.as_view(), name="tasksearch"),
+]

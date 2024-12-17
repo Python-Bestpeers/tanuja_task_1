@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/taskcreate.css' %}">{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="form-header">
+    <h2>Create New Task</h2>
+  </div>
+  <form method='POST'>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      <label for="task-name" class="form-label">Task Name</label>
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label for="priority" class="form-label">Priority</label>
+      {{ form.priority }}
+      {{ form.priority.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      {{ form.status }}
+      {{ form.status.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label for="end-date" class="form-label">End Date</label>
+      {{ form.end_date }}
+      {{ form.end_date.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label for="assign_to" class="form-label">Assigned To</label>
+      {{ form.assigned_to }}
+      {{ form.assigned_to.errors }}
+    </div>
+
+    <div>
+      <label for="description">Task Description:</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Create Task</button>
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </form>
+  <div class="text-center mt-4">
+    <a href="{% url 'homepage'%}" class="btn btn-secondary">Back to Dashboard</a>
+  </div>
+</div>
+
+
+
+{% endblock %}

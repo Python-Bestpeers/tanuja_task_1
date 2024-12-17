@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{%block content%}
+<div class="container">
+    <h1>Task List</h1>
+
+    {% if users %}
+    {% for user in users %}
+    <div class="task">
+      <div class="task-details">
+        <div class="task-title">{{ user.email }}</div>
+        <div class="task-meta">
+           {{user.phone_no}} 
+        </div>
+        <br>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="empty">No tasks available.</p>
+    {% endif %}
+  </div>
+{%endblock%}

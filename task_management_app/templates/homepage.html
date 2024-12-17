@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/homestyle.css' %}">
+{% endblock %}
+{% block content %}
+{% comment %} <p>welcome to our user Dashboard</p> {% endcomment %}
+<div class="container">
+  <div class="sidebar" id="sidebar">
+    <div class="logo">Task Manager</div>
+    <ul class="menu">
+      <li><a href="{%url 'homepage'%}">Dashboard</a></li>
+      <li><a href="{%url 'taskview'%}">Tasks</a></li>
+      <li><a href="{%url 'UserList'%}">Users List</a></li>
+      {% comment %} <li><a href="#">Calendar</a></li>
+      <li><a href="#">Settings</a></li> {% endcomment %}
+    </ul>
+  </div>
+
+  <div class="main-content" id="main-content">
+    <div class="navbar">
+      <button id="toggle-btn">&#9776;</button>
+      <div class="navbar-title">
+        <h1>Task Management System</h1>
+      </div>
+      <div class="navbar-right">
+        <a href="{% url 'profileview' %}" style="color:black;text-decoration:none"><div class="profile">👤 Profile</div></a>
+        <a href="{% url 'logoutpage' %}"><button class="logout-btn">Logout</button></a>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card card-blue">
+        <h3>Total Tasks</h3>
+        <p>{{total}}</p>
+        
+      </div>
+      <div class="card card-green">
+        <h3>Completed</h3>
+        <p>{{completed_count}}</p>
+      </div>
+      <div class="card card-yellow">
+        <h3>In_progress</h3>
+        <p>{{in_progress_count}}</p>
+       
+      </div>
+      <div class="card card-red">
+        <h3>Panding</h3>
+        <p>{{pending_count}}</p>
+        
+      </div>
+    </div>
+
+    <a href="{% url 'taskcreate'%}"><button class="create-task-btn" id="create-task-btn">+ Create Task</button></a>
+    <form method="GET" action="{% url 'tasksearch' %}">
+      {% csrf_token %}
+      <input type="text" name="q" placeholder="Search tasks...">
+      <button type="submit">Search</button>
+  </form>
+  
+  <div class="task-list"> 
+    <h2>Your Tasks</h2> 
+    <table> 
+      <thead>
+         <tr>
+           <th>Task Name</th> 
+           <th>Priority</th> 
+           <th>Status</th>
+            <th>Start Date</th>
+             <th>End Date</th>
+             <th>Assigned By</th>
+              <th>Assigned To</th> 
+              <th>Updated At</th>
+               <th>Actions</th> 
+              </tr> 
+            </thead>
+             <tbody id="task-table-body"> 
+              {% for task in tasks %} 
+              <tr class="task-item" onclick="window.location.href='{% url 'taskdetails' task.id %}';">
+                 <td>{{ task.title }}</td> 
+                 <td>{{ task.priority }}</td> 
+                 <td>{{ task.status }}</td>
+                  <td>{{ task.start_date }}</td>
+                   <td>{{ task.end_date }}</td>
+                    <td>{{ task.assigned_by.email }}</td> 
+                    <td>{{ task.assigned_to }}</td> 
+                    <td>{{ task.modified }}</td>
+                    <td> <a href="{% url 'updatetask' task.id %}" class="btn btn-edit">Edit</a>
+                       <a href="{% url 'deletetask' task.id %}" class="btn btn-delete">Delete</a> 
+                      </td>
+                       </tr> 
+                       {% empty %} 
+                       <tr> 
+                        <td colspan="9">No tasks available.</td>
+                       </tr> 
+                       {% endfor %} 
+                      </tbody> 
+                    </table> 
+  </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/homejs.js' %}"></script>
+{% endblock %}
