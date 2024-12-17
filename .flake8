@@ -1,4 +1,3 @@
 [flake8]
 exclude = */docs/*, */.tox/*, */.venv/*, */.pycharm_helpers/*, */migrations/*, docs/*, fabfile.py, */__init__.py, django_project/core/settings/*.py, django_project/*/tests/*.py, django_project/*/test_*.py, django_project/frontend/node_modules/*, env/*, settings.py,
 max-line-length = 120
-
