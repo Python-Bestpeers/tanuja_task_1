@@ -18,9 +18,8 @@
         </div>
       </div>
       <div class="task-actions">
-        <a href="{% url 'UpdateTask' task.id %}" class="btn btn-edit">Edit</a>
-        <a href="{% url 'DeleteTask' task.id %}" class="btn btn-delete">Delete</a>
-        <a href="{% url 'Commentdata' task.id %}" class="btn btn-edit">Add Comment</a>
+        <a href="{% url 'commentdata' task.id %}" class="btn btn-edit">Add Comment</a>
+        <a href="{% url 'commentshow' task.id %}" class="btn btn-edit">Show Comment</a>
       </div>
     </div>
     {% endfor %}

@@ -6,6 +6,9 @@
 
 {%block content%}
         <h2>All Comments</h2>
+        {%if comment%}
+        {{comment}}
+        {%endif%}
         {% for comment in comments %}
         <div class="comment-box">
             <div class="username">{{ comment.user.email }}</div>
