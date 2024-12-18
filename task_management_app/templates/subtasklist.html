@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h3>Sub-Tasks</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subtask in subtasks %}
+        <tr>
+            <td>{{ subtask.title }}</td>
+            <td>{{ subtask.status }}</td>
+            <td>{{ subtask.assigned_to }}</td>
+            <td>{{ subtask.created }}</td>
+            <td>{{ subtask.modified }}</td>
+            <td><a href="{% url 'subtask_editview' subtask.id %}"><button>Update Task</button></a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No Sub-Tasks available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{%url 'home_page'%}"><button>Back to Home</button></a>
+{% endblock %}

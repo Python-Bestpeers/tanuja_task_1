@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Sub-Task for "{{ parent_task.title }}"</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save SubTask</button>
+        <a href="{% url 'home_page' %}" class="btn btn-secondary">Cancel</a>
+        <a href="{%url 'home_page'%}"><button>Back to Home</button></a>
+    </form>
+</div>
+{% endblock %}

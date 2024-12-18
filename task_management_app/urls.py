@@ -15,6 +15,9 @@ from .views import (
     UserCreate,
     UserList,
     TaskSearch,
+    SubTaskCreateView,
+    ShowSubTasks,
+    SubTaskEditView,
 )
 
 urlpatterns = [
@@ -34,4 +37,13 @@ urlpatterns = [
     path("user-create/", UserCreate.as_view(), name="user_create"),
     path("user-List/", UserList.as_view(), name="user_list"),
     path("task-search/", TaskSearch.as_view(), name="task_search"),
+    path(
+        "taskcreate-subtask/<int:id>/",
+        SubTaskCreateView.as_view(),
+        name="subtask_createview",
+    ),
+    path("task/<int:id>/", ShowSubTasks.as_view(), name="subtask_showview"),
+    path(
+        "subtask/<int:id>/", SubTaskEditView.as_view(), name="subtask_editview"
+    ),
 ]
