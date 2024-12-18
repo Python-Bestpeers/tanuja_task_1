@@ -55,12 +55,10 @@ class RegistrationView(View):
     def post(self, request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            # form.save()
-            User.objects.create_user(
-                email=form.cleaned_data["email"],
-                phone_no=form.cleaned_data["phone_no"],
-                password=form.cleaned_data["password"],
-            )
+            user=form.save(commit=False)
+            password=form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
             messages.success(request, "User registered successfully")
             return redirect("login_form")
         else:
@@ -343,10 +341,10 @@ class ShowSubTasks(View):
         )
         parent_task = get_object_or_404(Task, id=id)
         if parent_task.status == "completed":
-            all_task = SubTask.objects.all()
-            for i in all_task:
-                i.status = "completed"
-                i.save()
+            all_subtasks = SubTask.objects.all()
+            for subtask in all_subtasks:
+                subtask.status = "completed"
+                subtask.save()
         elif all_completed:
             parent_task = get_object_or_404(Task, id=id)
             parent_task.status = "completed"
