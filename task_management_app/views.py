@@ -55,8 +55,8 @@ class RegistrationView(View):
     def post(self, request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user=form.save(commit=False)
-            password=form.cleaned_data['password']
+            user = form.save(commit=False)
+            password = form.cleaned_data["password"]
             user.set_password(password)
             user.save()
             messages.success(request, "User registered successfully")

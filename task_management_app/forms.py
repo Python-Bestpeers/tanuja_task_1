@@ -96,7 +96,7 @@ class LoginForm(forms.Form):
 
 
 class RegistrationForm(forms.ModelForm):
-    
+
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
@@ -134,10 +134,10 @@ class RegistrationForm(forms.ModelForm):
         )
     )
     terms = forms.BooleanField(required=True, widget=forms.CheckboxInput())
-    
+
     class Meta:
         model = User
-        fields=['email', 'phone_no', 'password']
+        fields = ["email", "phone_no", "password"]
 
     def clean(self):
         cleaned_data = super().clean()
