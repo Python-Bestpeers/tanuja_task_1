@@ -63,3 +63,17 @@ class Comment(TimeStampedModel):
 
     def __str__(self):
         return self.comment_text
+
+
+class SubTask(TimeStampedModel):
+    parent_task = models.ForeignKey(
+        Task, on_delete=models.CASCADE, related_name="subtasks"
+    )
+    title = models.CharField(max_length=200)
+    status = models.CharField(
+        max_length=20, choices=Task.STATUS_CHOICES, default="Pending"
+    )
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def _str_(self):
+        return f"{self.title} (SubTask of {self.parent_task.title})"

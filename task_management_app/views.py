@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
-from .models import Task, User, Comment
+from .models import Task, User, Comment, SubTask
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponse
@@ -14,6 +14,8 @@ from .forms import (
     LoginForm,
     RegistrationForm,
     CommentForm,
+    SubTaskCreateForm,
+    SubTaskForm,
 )
 
 
@@ -53,7 +55,12 @@ class RegistrationView(View):
     def post(self, request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
+            # form.save()
+            User.objects.create_user(
+                email=form.cleaned_data["email"],
+                phone_no=form.cleaned_data["phone_no"],
+                password=form.cleaned_data["password"],
+            )
             messages.success(request, "User registered successfully")
             return redirect("login_form")
         else:
@@ -67,11 +74,11 @@ class HomePage(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         if user.is_superuser:
-            tasks = Task.objects.all()
+            tasks = Task.objects.all().order_by("created")
         else:
             tasks = Task.objects.filter(
                 Q(assigned_by=user) | Q(assigned_to=user)
-            )
+            ).order_by("created")
 
         total = tasks.count()
         completed_tasks = tasks.filter(status="completed")
@@ -205,8 +212,17 @@ class TaskUpdateView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         task = get_object_or_404(Task, pk=id)
-        form = TaskUpdateForm(instance=task)
-        return render(request, "updateform.html", {"form": form, "task": task})
+        if (
+            task.assigned_by == request.user
+            or task.assigned_to == request.user
+        ):
+            form = TaskUpdateForm(instance=task)
+            return render(
+                request, "updateform.html", {"form": form, "task": task}
+            )
+        else:
+            messages.error(request, "You do not update thus task")
+            return redirect("home_page")
 
     def post(self, request, id):
         task = get_object_or_404(Task, pk=id)
@@ -282,3 +298,78 @@ class TaskSearch(LoginRequiredMixin, View):
             tasks = Task.objects.all()
 
         return render(request, "search.html", {"tasks": tasks, "query": query})
+
+
+class SubTaskCreateView(View):
+    """Create a new SubTask for an existing Task."""
+
+    def get(self, request, id):
+        parent_task = get_object_or_404(Task, id=id)
+        form = SubTaskCreateForm()
+        return render(
+            request,
+            "subtaskcreateform.html",
+            {"form": form, "parent_task": parent_task},
+        )
+
+    def post(self, request, id):
+        parent_task = get_object_or_404(Task, id=id)
+        form = SubTaskCreateForm(request.POST)
+        if form.is_valid():
+            subtask = form.save(commit=False)
+            subtask.parent_task = parent_task
+            subtask.save()
+            if (
+                parent_task.subtasks.filter(
+                    status__in=["Pending", "In Progress"]
+                ).count()
+                == 0
+            ):
+                parent_task.status = "Completed"
+                parent_task.save()
+            return redirect("home_page")
+        return render(
+            request,
+            "subtaskcreateform.html",
+            {"form": form, "parent_task": parent_task},
+        )
+
+
+class ShowSubTasks(View):
+    def get(self, request, id):
+        subtasks = SubTask.objects.filter(parent_task__id=id)
+        all_completed = all(
+            subtask.status == "completed" for subtask in subtasks
+        )
+        parent_task = get_object_or_404(Task, id=id)
+        if parent_task.status == "completed":
+            all_task = SubTask.objects.all()
+            for i in all_task:
+                i.status = "completed"
+                i.save()
+        elif all_completed:
+            parent_task = get_object_or_404(Task, id=id)
+            parent_task.status = "completed"
+            parent_task.save()
+        else:
+            parent_task = get_object_or_404(Task, id=id)
+            parent_task.status = "in_progress"
+            parent_task.save()
+        return render(request, "subtasklist.html", {"subtasks": subtasks})
+
+
+class SubTaskEditView(View):
+    def get(self, request, id):
+        subtask = get_object_or_404(SubTask, id=id)
+        form = SubTaskForm(instance=subtask)
+        return render(request, "updatesubtask.html", {"form": form})
+
+    def post(self, request, id):
+        subtask = get_object_or_404(SubTask, id=id)
+        parent_id = subtask.parent_task.id
+
+        form = SubTaskForm(request.POST, instance=subtask)
+        if form.is_valid():
+            form.save()
+            return redirect(f"/task/{parent_id}/")
+        return render(request, "updatesubtask.html", {"form": form})

@@ -1,5 +1,5 @@
 from django import forms
-from .models import User, Task, Comment
+from .models import User, Task, Comment, SubTask
 
 
 class UserCreateForm(forms.ModelForm):
@@ -159,3 +159,32 @@ class CommentForm(forms.ModelForm):
                 }
             )
         }
+
+
+class SubTaskCreateForm(forms.ModelForm):
+    class Meta:
+        model = SubTask
+        fields = ["title", "status", "assigned_to"]
+        widgets = {
+            "title": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Sub-task Title",
+                }
+            ),
+            "status": forms.Select(attrs={"class": "form-select"}),
+            "assigned_to": forms.Select(attrs={"class": "form-select"}),
+        }
+
+
+class SubTaskForm(forms.ModelForm):
+    class Meta:
+        model = SubTask
+        fields = ["title", "status", "parent_task"]
+
+    STATUS_CHOICES = [
+        ("completed", "completed"),
+        ("in-progress", "in-progress"),
+        ("pending", "pending"),
+    ]
+    status = forms.ChoiceField(choices=STATUS_CHOICES)
